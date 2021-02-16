@@ -1,0 +1,4 @@
+Average RSSI (dBm) measured at master when each beacon is 1 m away:
+vermillion1: -47
+vermillion2: -56
+vermillion3: -51
