@@ -10,9 +10,9 @@ const char *beacon2 = "vermillion2";
 const char *beacon3 = "vermillion3";
 const int8_t i2c_addr = 8;
 
-int beacon1_rssi = -50;
-int beacon2_rssi = -50;
-int beacon3_rssi = -50;
+int beacon1_rssi = -51;
+int beacon2_rssi = -51;
+int beacon3_rssi = -51;
 
 // function that executes whenever data is requested by master
 // this function is registered as an event, see setup()
@@ -23,7 +23,7 @@ void requestEvent() {
 }
  
 void setup() {
-  Serial.begin(115200);
+  Serial.begin(9600);
  
   WiFi.mode(WIFI_STA);
   WiFi.disconnect();
@@ -52,6 +52,6 @@ void loop() {
   }
 
   // Wait a bit before scanning again
-  delay(10);
+  delay(100);
   WiFi.scanDelete();  
 }
