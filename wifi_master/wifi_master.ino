@@ -56,9 +56,8 @@ void loop() {
   Wire.write((signed char)beacon2_rssi);
   Wire.write((signed char)beacon3_rssi);
   Wire.endTransmission();
-  Serial.println("Transmitted");
 
+  WiFi.scanDelete();
   // Wait a bit before scanning again
-  delay(100);
-  WiFi.scanDelete();  
+  delay(10);
 }
