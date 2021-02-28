@@ -8,7 +8,7 @@
 const char *beacon1 = "vermillion1";
 const char *beacon2 = "vermillion2";
 const char *beacon3 = "vermillion3";
-const int8_t i2c_addr = 8;
+const int8_t arduino_addr = 8;
 
 int beacon1_rssi = -51;
 int beacon2_rssi = -51;
@@ -31,7 +31,7 @@ void setup() {
   delay(2000);
   Serial.println("Setup done");
 
-  Wire.begin(i2c_addr); // join i2c bus
+  Wire.begin();
   Wire.onRequest(requestEvent);
 }
  
@@ -50,6 +50,13 @@ void loop() {
       }
     }
   }
+
+  Wire.beginTransmission(arduino_addr);
+  Wire.write((signed char)beacon1_rssi);
+  Wire.write((signed char)beacon2_rssi);
+  Wire.write((signed char)beacon3_rssi);
+  Wire.endTransmission();
+  Serial.println("Transmitted");
 
   // Wait a bit before scanning again
   delay(100);

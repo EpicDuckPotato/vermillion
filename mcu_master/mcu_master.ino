@@ -1,19 +1,41 @@
 #include <Wire.h>
 #include <Adafruit_LSM6DS33.h>
 
-const int8_t wifi_addr = 8;
-const int8_t imu_addr = 0x6A;
+// For SPI mode, we need a CS pin
+#define LSM_CS 10
+// For software-SPI mode we need SCK/MOSI/MISO pins
+#define LSM_SCK 13
+#define LSM_MISO 12
+#define LSM_MOSI 11
+
+const int8_t self_addr = 8;
 
 int rssi[3];
 
 Adafruit_LSM6DS33 lsm6ds33;
 
+void receiveEvent(int howMany)
+{
+  for (int i = 0; i < 3 && i < howMany; ++i) {
+    if (!Wire.available()) {
+      break;
+    }
+    rssi[i] = (signed char)Wire.read();
+  }
+}
+
 void setup() {
+  rssi[0] = -50;
+  rssi[1] = -50;
+  rssi[2] = -50;
+  
   Serial.begin(9600);  // start serial for output
   Serial.println("hello world!");
 
+  Wire.begin(self_addr);
+
   /*
-  if (!lsm6ds33.begin_I2C()) {
+  if (!!lsm6ds33.begin_SPI(LSM_CS, LSM_SCK, LSM_MISO, LSM_MOSI)) {
     Serial.println("Failed to find LSM6DS33 chip");
     while (1) {
       delay(10);
@@ -28,10 +50,7 @@ void setup() {
   lsm6ds33.setGyroDataRate(LSM6DS_RATE_12_5_HZ);
   */
 
-  Wire.begin();        // join i2c bus (address optional for master)
-  rssi[0] = -50;
-  rssi[1] = -50;
-  rssi[2] = -50;
+  Wire.onReceive(receiveEvent);
 }
 
 void loop() {
@@ -57,24 +76,15 @@ void loop() {
   Serial.print(" ");
   Serial.print(gyro.gyro.y);
   Serial.print(" ");
-  Serial.println(gyro.gyro.z);
+  Serial.print(gyro.gyro.z);
+  Serial.print(" rssi");
   */
   
-  
-  if (Wire.requestFrom(wifi_addr, 3)) {
-     // slave may send less than requested, which is why
-     // we call Wire.available()
-    for (int i = 0; i < 3 && Wire.available(); ++i) {
-      rssi[i] = Wire.read();
-      Serial.println("Here");
-    }
-    Serial.print("rssi ");
-    Serial.print(rssi[0]);
+  for (int i = 0; i < 3; ++i) {
     Serial.print(" ");
-    Serial.print(rssi[1]);
-    Serial.print(" ");
-    Serial.println(rssi[2]);
+    Serial.print(rssi[i]);
   }
+  Serial.println();
   
   delay(10);
 }
